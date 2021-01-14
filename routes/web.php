@@ -15,8 +15,8 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::redirect('/','developers');
-Route::get('developers',[DevelopersController::class,'index']);
+//Route::redirect('/','developers');
+Route::get('/',[DevelopersController::class,'index']);
 
 Route::Fallback(function()
 {

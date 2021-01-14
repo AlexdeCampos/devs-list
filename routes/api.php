@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\DelevolpersController;
+use App\Http\Controllers\DevelopersController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,17 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::prefix('developer')->group(function() 
 {
-    Route::get('/',[DevelopersController::class,'get']);
+    Route::get('/{id?}', function ($id = null,Request $request) {
+        $page = $request->input("p");
+        $quantity = $request->input("q");
+        $devController = new DevelopersController();
+        
+        return $devController->get($id,$page,$quantity);
+    });
 
-    Route::post('/',[DelevolpersController::class,'set']);
+    Route::post('/',[DevelopersController::class,'set']);
 
-    Route::put('/',[DelevolpersController::class,'set']);
+    Route::put('/{id}',[DevelopersController::class,'set']);
 
-    Route::delete('/',[DelevolpersController::class,'delete']);
+    Route::delete('/{id}',[DevelopersController::class,'delete']);
 });
