@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
@@ -10,54 +11,46 @@ use App\Models\Developer;
 
 class DevelopersController extends Controller
 {
-    // View
-    public function index()
-    {
-        
-    }
 
     // Record Search (All records/Filtered)
     public function get($id, $page, $quantity)
     {
-        if($id){
+        if ($id) {
             $developer = Developer::find($id);
 
-            if($developer){
+            if ($developer) {
                 return \response()->json([
                     'data' => $developer,
                     'message' => "Success!",
-                ], Response::HTTP_ACCEPTED); 
+                ], Response::HTTP_ACCEPTED);
             }
-    
+
             return \response()->json([
                 'data' =>  [],
                 'message' => "Developer not found!",
-            ], Response::HTTP_INTERNAL_SERVER_ERROR); 
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $offset = null;
-        if($page && $quantity)
-        {
-            $quantity = (double) $quantity;
-            $page = (double) $page;
-            $offset = $quantity * ($page -1);
-        }
-        
+        $quantity = ($quantity) ? (float) $quantity : 10;
+        $page = ($page) ? (float) $page : 1;
+        $offset = $quantity * ($page - 1);
+
         $developers = Developer::all()
-                               ->sortBy(['nome', 'idade'])
-                               ->skip($offset)
-                               ->take($quantity);
+            ->sortBy(['nome', 'idade'])
+            ->skip($offset)
+            ->take($quantity);
 
         $list = [];
-        foreach($developers as $developer){
+        foreach ($developers as $developer) {
             $list[] = $developer;
         }
+        $pagination = $this->getPagination($page, $quantity);
 
         return \response()->json([
+            'pagination' => $pagination,
             'data' =>  $list,
             'message' => 'Sucesso!!',
-        ], Response::HTTP_ACCEPTED); 
-
+        ], Response::HTTP_ACCEPTED);
     }
 
     // Record Deletion 
@@ -65,18 +58,18 @@ class DevelopersController extends Controller
     {
         $developer = Developer::find($id);
 
-        if($developer){
+        if ($developer) {
             $developer->delete();
             return \response()->json([
                 'data' =>  [],
                 'message' => "Developer successfully deleted!",
-            ], Response::HTTP_ACCEPTED); 
+            ], Response::HTTP_ACCEPTED);
         }
 
         return \response()->json([
             'data' =>  [],
             'message' => "Developer not found!",
-        ], Response::HTTP_INTERNAL_SERVER_ERROR); 
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     // Record Inclusion/Editing
@@ -84,20 +77,19 @@ class DevelopersController extends Controller
     {
         $req = $request->input();
 
-        if(!empty($id)){
+        if (!empty($id)) {
             $developer = Developer::find($id);
 
-            if(!$developer){
+            if (!$developer) {
                 return \response()->json([
                     'data' =>  [],
                     'message' => 'Developer not found!',
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-
-        }else{
+        } else {
             $developer = new Developer();
         }
-        
+
         $developer->nome = $req["nome"];
         $developer->sexo = $req["sexo"];
         $developer->idade = $req["idade"];
@@ -108,6 +100,18 @@ class DevelopersController extends Controller
         return \response()->json([
             'data' =>  $developer,
             'message' => 'Sucesso!',
-        ], Response::HTTP_ACCEPTED); 
-        }
+        ], Response::HTTP_ACCEPTED);
+    }
+
+    public function getPagination($page, $quantity)
+    {
+        $count = $developers = Developer::count();
+
+        $pages =  ceil($count / $quantity);
+        return [
+            "page" => $page,
+            "quantity" => $quantity,
+            "pages" => $pages
+        ];
+    }
 }

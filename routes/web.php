@@ -15,10 +15,5 @@ use Illuminate\Http\Request;
 |
 */
 
-//Route::redirect('/','developers');
-Route::get('/',[DevelopersController::class,'index']);
-
-Route::Fallback(function()
-{
-    return view('404');
-});
+Route::redirect('/developer', '/');
+Route::view("/{any}", 'developers')->where('any', '.*');
