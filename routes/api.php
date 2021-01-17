@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('developer')->group(function() 
 {
-    Route::get('/{id?}', function ($id = null,Request $request) {
+    Route::get('/{id?}', function (int $id = null,Request $request) {
         $page = $request->input("p");
         $quantity = $request->input("q");
         $devController = new DevelopersController();
@@ -26,9 +26,19 @@ Route::prefix('developer')->group(function()
         return $devController->get($id,$page,$quantity);
     });
 
-    Route::post('/',[DevelopersController::class,'set']);
-
-    Route::put('/{id}',[DevelopersController::class,'set']);
+    Route::post('/', function (Request $request) {
+        $req = $request->input();
+        $devController = new DevelopersController();
+        
+        return $devController->set(null,$req);
+    });
+    
+    Route::put('/{id?}', function (int $id = null,Request $request) {
+        $req = $request->input();
+        $devController = new DevelopersController();
+        
+        return $devController->set($id,$req);
+    });
 
     Route::delete('/{id}',[DevelopersController::class,'delete']);
 });

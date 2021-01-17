@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use App\Models\Developer;
@@ -13,7 +10,7 @@ class DevelopersController extends Controller
 {
 
     // Record Search (All records/Filtered)
-    public function get($id, $page, $quantity)
+    public function get($id, $page = 1, $quantity = 10)
     {
         if ($id) {
             $developer = Developer::find($id);
@@ -26,7 +23,7 @@ class DevelopersController extends Controller
             }
 
             return \response()->json([
-                'data' =>  [],
+                'data' =>  (object) [],
                 'message' => "Developer not found!",
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -73,16 +70,14 @@ class DevelopersController extends Controller
     }
 
     // Record Inclusion/Editing
-    public function set($id = null, Request $request)
+    public function set($id = null, $req)
     {
-        $req = $request->input();
-
         if (!empty($id)) {
             $developer = Developer::find($id);
 
             if (!$developer) {
                 return \response()->json([
-                    'data' =>  [],
+                    'data' =>  (object) [],
                     'message' => 'Developer not found!',
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
@@ -105,7 +100,7 @@ class DevelopersController extends Controller
 
     public function getPagination($page, $quantity)
     {
-        $count = $developers = Developer::count();
+        $count = Developer::count();
 
         $pages =  ceil($count / $quantity);
         return [
