@@ -56,6 +56,12 @@ class DeveloperTest extends TestCase
         $this->assertEquals(202, $status, $developerData->message);
         $this->assertEquals((object)$developer, $developerData->data);
 
+        // delete developer data
+        $devController->delete($id);
+        $getDeveloper = $devController->get($id);
+        $status = $getDeveloper->getStatusCode();
+        $this->assertEquals(500, $status);
+
     }
 
     public function developerProvider()

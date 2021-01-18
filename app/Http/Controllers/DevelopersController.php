@@ -24,7 +24,7 @@ class DevelopersController extends Controller
 
             return \response()->json([
                 'data' =>  (object) [],
-                'message' => "Developer not found!",
+                'message' => "Desenvolvedor não encontrado!",
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -59,13 +59,13 @@ class DevelopersController extends Controller
             $developer->delete();
             return \response()->json([
                 'data' =>  [],
-                'message' => "Developer successfully deleted!",
+                'message' => "Desenvolvedor excluído com sucesso!",
             ], Response::HTTP_ACCEPTED);
         }
 
         return \response()->json([
             'data' =>  [],
-            'message' => "Developer not found!",
+            'message' => "Desenvolvedor não encontrado!",
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -78,7 +78,7 @@ class DevelopersController extends Controller
             if (!$developer) {
                 return \response()->json([
                     'data' =>  (object) [],
-                    'message' => 'Developer not found!',
+                    'message' => 'Desenvolvedor não encontrado!',
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         } else {
@@ -98,6 +98,7 @@ class DevelopersController extends Controller
         ], Response::HTTP_ACCEPTED);
     }
 
+    // Return the total pages from the registers
     public function getPagination($page, $quantity)
     {
         $count = Developer::count();
